@@ -5,8 +5,26 @@ public class Task {
 	String taskId;
 	String taskPage;
 	String taskType;
+	String taskStatus="INIT";
+	boolean isDone=false;
 	
 	
+	public boolean isDone() {
+		return isDone;
+	}
+
+	public void setDone(boolean isDone) {
+		this.isDone = isDone;
+	}
+
+	public String getTaskStatus() {
+		return taskStatus;
+	}
+
+	public void setTaskStatus(String taskStatus) {
+		this.taskStatus = taskStatus;
+	}
+
 	public String getTaskType() {
 		return taskType;
 	}
