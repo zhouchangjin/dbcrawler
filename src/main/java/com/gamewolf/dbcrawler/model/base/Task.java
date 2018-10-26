@@ -5,15 +5,16 @@ public class Task {
 	String taskId;
 	String taskPage;
 	String taskType;
+	String crawlerType;
 	String taskStatus="INIT";
 	boolean isDone=false;
 	
 	
-	public boolean isDone() {
+	public boolean getIsDone() {
 		return isDone;
 	}
 
-	public void setDone(boolean isDone) {
+	public void setIsDone(boolean isDone) {
 		this.isDone = isDone;
 	}
 
@@ -48,6 +49,14 @@ public class Task {
 	
 	public void setTaskPage(String taskPage) {
 		this.taskPage = taskPage;
+	}
+	
+	public String getCrawlerType() {
+		return crawlerType;
+	}
+
+	public void setCrawlerType(String crawlerType) {
+		this.crawlerType = crawlerType;
 	}
 
 }
