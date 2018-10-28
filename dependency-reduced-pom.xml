@@ -25,7 +25,7 @@
             </configuration>
           </execution>
         </executions>
-        <configuration> 
+        <configuration>
           <createDependencyReducedPom>true</createDependencyReducedPom>
           <filters>
             <filter>

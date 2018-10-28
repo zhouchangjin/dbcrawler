@@ -69,6 +69,7 @@ public class DangDangISBNLookUpServer extends ParameterizedInitializer {
 					bw.newLine();
 					bw.flush();
 					ddCrawler.getCrawler().clearPage();
+					Thread.sleep(300);
 				}
 				
 			}
@@ -78,6 +79,9 @@ public class DangDangISBNLookUpServer extends ParameterizedInitializer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

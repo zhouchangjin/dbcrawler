@@ -22,7 +22,7 @@ public class ISBNList {
 	private void run() {
 		String head = "9787";
 		String pressListFile = "c:/presslist.txt";
-		String isbnAllFile="c:/isbnall.txt";
+		String isbnAllFile="c:/isbncsv/isbnall.txt";
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(pressListFile));
 			BufferedWriter bw=new BufferedWriter(new FileWriter(isbnAllFile));
