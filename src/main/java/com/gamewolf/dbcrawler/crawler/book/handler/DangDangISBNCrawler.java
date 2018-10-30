@@ -41,11 +41,11 @@ public class DangDangISBNCrawler extends ParameterizedInitializer {
 		main.run();
 	}
     
-	public DBCrawler getDdCrawler() {
+	public DBCrawler getCrawler() {
 		return crawler;
 	}
 
-	public void setDdCrawler(DBCrawler ddCrawler) {
+	public void setCrawler(DBCrawler ddCrawler) {
 		this.crawler = ddCrawler;
 	}
 	
