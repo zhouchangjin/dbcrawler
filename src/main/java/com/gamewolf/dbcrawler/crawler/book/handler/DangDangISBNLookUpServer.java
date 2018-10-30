@@ -88,13 +88,14 @@ public class DangDangISBNLookUpServer extends ParameterizedInitializer {
 		ProxyPool pool=new ProxyPool(url, parser);
 		
 		int startPage=getPage();
-		boolean useProxy=false;
+		String useProxy=this.params.getStringValue("use_proxy");
 		//String isbnFile="c:/isbn_dangdang_rest.txt";  //输入为isbn列表，每行一个isbn
 		//String outFile="c:/isbn_dangdang.txt";
 		String isbnFile=this.params.getStringValue("task_file");
 		String outFile=this.params.getStringValue("output_file");
 		System.out.println(isbnFile);
 		System.out.println(outFile);
+		System.out.println(useProxy);
 		try {
 			BufferedReader br=new BufferedReader(new FileReader(isbnFile));
 			BufferedWriter bw=new BufferedWriter(new FileWriter(outFile));
@@ -108,7 +109,7 @@ public class DangDangISBNLookUpServer extends ParameterizedInitializer {
 					String ddUrl="http://search.dangdang.com/?key=" + isbn;//"https://search.jd.com/Search?keyword=" + isbn;
 					ddCrawler.getCrawler().addPage(ddUrl);
 					List<Object> list=null;
-					if(useProxy) {
+					if(useProxy!=null && useProxy.equals("true")) {
 						list=ddCrawler.getCrawler().crawlWithProxy(DDBookFSearch.class, pool, test);//.crawl(DDBookFSearch.class);
 					}else {
 						list=ddCrawler.getCrawler().crawl(DDBookFSearch.class);
