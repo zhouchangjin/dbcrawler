@@ -3,6 +3,7 @@ package com.gamewolf.dbcrawler.crawler.book.handler;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.jms.Connection;
@@ -16,6 +17,8 @@ import javax.jms.TextMessage;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.gamewolf.database.handler.MySqlHandler;
 import com.gamewolf.database.orm.annotation.MysqlTableBinding;
 import com.gamewolf.dbcrawler.base.DBCrawler;
@@ -23,6 +26,12 @@ import com.gamewolf.dbcrawler.crawler.book.model.DangDangPricePage;
 import com.gamewolf.dbcrawler.initializer.ParameterizedInitializer;
 import com.gamewolf.dbcrawler.model.base.Task;
 import com.harmonywisdom.crawler.annotation.PageCrawlerDBSetting;
+import com.harmonywisdom.crawler.httputil.HtmlFetcher;
+import com.harmonywisdom.crawler.proxy.Proxy;
+import com.harmonywisdom.crawler.proxy.ProxyPool;
+import com.harmonywisdom.crawler.proxy.ProxyTap;
+import com.harmonywisdom.crawler.proxy.ProxyTester;
+import com.harmonywisdom.crawler.proxy.ResultParser;
 
 public class DangdangPageCrawler extends ParameterizedInitializer{
 	
@@ -52,15 +61,66 @@ public class DangdangPageCrawler extends ParameterizedInitializer{
 	}
 
 	private void run() {
-		// TODO Auto-generated method stub
+		
+		String url="http://webapi.http.zhimacangku.com/getip?num=1&type=2&pro=&city=0&yys=0&port=1&pack=19087&ts=0&ys=0&cs=0&lb=1&sb=0&pb=4&mr=1&regions=";
+		ResultParser parser=new ResultParser() {
+			@Override
+			public List<Proxy> parse(String text) {
+				List<Proxy> list=new ArrayList<Proxy>();
+				JSONObject obj=JSON.parseObject(text);
+				if(obj.getBoolean("success")) {
+					JSONArray array=obj.getJSONArray("data");
+					for(int i=0;i<array.size();i++) {
+						JSONObject proxyObj=array.getJSONObject(i);
+						String ip=proxyObj.getString("ip");
+						int port=proxyObj.getIntValue("port");
+						Proxy p=new Proxy();
+						p.setHost(ip);
+						p.setPort(port);
+						list.add(p);
+					}
+				}
+				return list;
+			}
+		};
+		
+		ProxyTester test=new ProxyTester() {
+			
+			@Override
+			public boolean test(Proxy proxy) {
+				// TODO Auto-generated method stub
+				String url="http://product.m.dangdang.com/1146180050.html";
+				String res=HtmlFetcher.FetchFromUrlWithProxy(url, proxy.getHost(), proxy.getPort());
+				if(res==null ||"".equals(res)) {
+					System.out.println("=======连接已经失效=========");
+					return false;
+				}else if(res.contains("error404")){
+					System.out.println("========反爬虫==============");
+					return false;
+				}else {
+					return true;
+				}
+			}
+		};
+		
+		ProxyPool pool=new ProxyPool(url, parser);
+		
+		
+		boolean useProxyFlag=false;
+		String useProxy=this.params.getStringValue("use_proxy");
 		String file=this.params.getStringValue("out_file");//"c:/dangdang_page.txt";
 		if(file==null) {
-			file="c:/out.txt";
+			file="out.txt";
+		}
+		if(useProxy==null || !useProxy.equals("true")) {
+			useProxyFlag=false;
+		}else {
+			useProxyFlag=true;
 		}
 		try {
 			BufferedWriter bw=new BufferedWriter(new FileWriter(file,true));
 			String brokerUrl="tcp://127.0.0.1:61616";
-			ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("admin", "admin", brokerUrl);
+			ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("zhouchangjin", "zhouchangjin", brokerUrl);
 			
 			connection = connectionFactory.createConnection();
 			connection.start(); // 创建session
@@ -77,7 +137,7 @@ public class DangdangPageCrawler extends ParameterizedInitializer{
 					String page=t.getTaskPage();
 					String processedUrl=page.replace("product.dangdang.com", "product.m.dangdang.com");
 					crawler.getCrawler().addPage(processedUrl);
-					DangDangPricePage data=crawl(processedUrl);
+					DangDangPricePage data=crawl(processedUrl,useProxyFlag,pool,test);
 					crawler.getCrawler().clearPage();
 					if(data!=null) {
 						handler.updateObject("is_done=1", "task_id='"+t.getTaskId()+"'");
@@ -106,10 +166,15 @@ public class DangdangPageCrawler extends ParameterizedInitializer{
 	}
 	
 	
-	private DangDangPricePage crawl(String url) {
+	private DangDangPricePage crawl(String url,boolean useProxy,ProxyTap tap,ProxyTester tester) {
 		System.out.println(url);
+		List<Object> list;
+		if(useProxy) {
+			list= crawler.getCrawler().crawlWithProxy(DangDangPricePage.class, tap, tester);
+		}else {
+			list= crawler.getCrawler().crawl(DangDangPricePage.class);
+		}
 		
-		List<Object> list= crawler.getCrawler().crawl(DangDangPricePage.class);
 		
 		if(list.size()>0) {
 			DangDangPricePage p=(DangDangPricePage)list.get(0);

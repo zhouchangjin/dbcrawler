@@ -23,29 +23,37 @@ import com.harmonywisdom.crawler.proxy.ProxyPool;
 import com.harmonywisdom.crawler.proxy.ProxyTester;
 import com.harmonywisdom.crawler.proxy.ResultParser;
 
-public class DangDangISBNLookUpServer extends ParameterizedInitializer {
+public class DangDangISBNCrawler extends ParameterizedInitializer {
 	
 	@PageCrawlerDBSetting(value = "ISBN_DD")
-	public DBCrawler ddCrawler;
+	public DBCrawler crawler;
+	
+	public ResultParser parser;
+	
+	public ProxyTester tester;
+	
+	
+	public ProxyPool pool;
 	
 	public static void main(String[] args) {
-		DangDangISBNLookUpServer main=new DangDangISBNLookUpServer();
+		DangDangISBNCrawler main=new DangDangISBNCrawler();
 		main.init(args);
 		main.run();
 	}
     
 	public DBCrawler getDdCrawler() {
-		return ddCrawler;
+		return crawler;
 	}
 
 	public void setDdCrawler(DBCrawler ddCrawler) {
-		this.ddCrawler = ddCrawler;
+		this.crawler = ddCrawler;
 	}
-
-	private void run() {
-		
+	
+	
+	private void initProxy() {
 		String url="http://webapi.http.zhimacangku.com/getip?num=1&type=2&pro=&city=0&yys=0&port=1&pack=19087&ts=0&ys=0&cs=0&lb=1&sb=0&pb=4&mr=1&regions=";
-		ResultParser parser=new ResultParser() {
+		
+		parser=new ResultParser() {
 			@Override
 			public List<Proxy> parse(String text) {
 				List<Proxy> list=new ArrayList<Proxy>();
@@ -66,7 +74,8 @@ public class DangDangISBNLookUpServer extends ParameterizedInitializer {
 			}
 		};
 		
-		ProxyTester test=new ProxyTester() {
+		
+		tester=new ProxyTester() {
 			
 			@Override
 			public boolean test(Proxy proxy) {
@@ -85,7 +94,15 @@ public class DangDangISBNLookUpServer extends ParameterizedInitializer {
 			}
 		};
 		
-		ProxyPool pool=new ProxyPool(url, parser);
+		pool=new ProxyPool(url, parser);
+	}
+
+	private void run() {
+		
+		
+		initProxy();
+		
+
 		
 		int startPage=getPage();
 		String useProxy=this.params.getStringValue("use_proxy");
@@ -107,12 +124,12 @@ public class DangDangISBNLookUpServer extends ParameterizedInitializer {
 					String isbn=line;
 					
 					String ddUrl="http://search.dangdang.com/?key=" + isbn;//"https://search.jd.com/Search?keyword=" + isbn;
-					ddCrawler.getCrawler().addPage(ddUrl);
+					crawler.getCrawler().addPage(ddUrl);
 					List<Object> list=null;
 					if(useProxy!=null && useProxy.equals("true")) {
-						list=ddCrawler.getCrawler().crawlWithProxy(DDBookFSearch.class, pool, test);//.crawl(DDBookFSearch.class);
+						list=crawler.getCrawler().crawlWithProxy(DDBookFSearch.class, pool, tester);//.crawl(DDBookFSearch.class);
 					}else {
-						list=ddCrawler.getCrawler().crawl(DDBookFSearch.class);
+						list=crawler.getCrawler().crawl(DDBookFSearch.class);
 					}
 					
 					DDBookFSearch search=(DDBookFSearch) list.get(0);
@@ -126,7 +143,7 @@ public class DangDangISBNLookUpServer extends ParameterizedInitializer {
 					bw.write(newLine);
 					bw.newLine();
 					bw.flush();
-					ddCrawler.getCrawler().clearPage();
+					crawler.getCrawler().clearPage();
 					Thread.sleep(300);
 				}
 				

@@ -19,7 +19,7 @@
               <transformers>
                 <transformer />
                 <transformer>
-                  <mainClass>com.gamewolf.dbcrawler.crawler.book.handler.DangDangISBNLookUpServer</mainClass>
+                  <mainClass>com.gamewolf.dbcrawler.crawler.book.handler.DangDangISBNCrawler</mainClass>
                 </transformer>
               </transformers>
             </configuration>
