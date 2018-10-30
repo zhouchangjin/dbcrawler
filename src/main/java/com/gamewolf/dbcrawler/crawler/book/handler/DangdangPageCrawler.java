@@ -53,11 +53,14 @@ public class DangdangPageCrawler extends ParameterizedInitializer{
 
 	private void run() {
 		// TODO Auto-generated method stub
-		String file="c:/dangdang_page.txt";
+		String file=this.params.getStringValue("out_file");//"c:/dangdang_page.txt";
+		if(file==null) {
+			file="c:/out.txt";
+		}
 		try {
 			BufferedWriter bw=new BufferedWriter(new FileWriter(file,true));
 			String brokerUrl="tcp://127.0.0.1:61616";
-			ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("zhouchangjin", "zhouchangjin", brokerUrl);
+			ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("admin", "admin", brokerUrl);
 			
 			connection = connectionFactory.createConnection();
 			connection.start(); // 创建session
@@ -68,12 +71,14 @@ public class DangdangPageCrawler extends ParameterizedInitializer{
 			while (true) {
 				TextMessage message = (TextMessage) consumer.receive();
 				if (message != null) {
+					session.commit();
 					Task t=JSON.parseObject(message.getText(),Task.class);
 					
 					String page=t.getTaskPage();
-					System.out.println(page);
 					String processedUrl=page.replace("product.dangdang.com", "product.m.dangdang.com");
+					crawler.getCrawler().addPage(processedUrl);
 					DangDangPricePage data=crawl(processedUrl);
+					crawler.getCrawler().clearPage();
 					if(data!=null) {
 						handler.updateObject("is_done=1", "task_id='"+t.getTaskId()+"'");
 						String line=data.getUrl()+","+data.getOriginalPrice()+","+data.getPrice()+",'"+data.getCategoryText()+"'"+",'"+data.getProductJson()+"'";
@@ -87,7 +92,8 @@ public class DangdangPageCrawler extends ParameterizedInitializer{
 				}
 			}
 			bw.close();
-			
+			session.close();
+			connection.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -101,15 +107,18 @@ public class DangdangPageCrawler extends ParameterizedInitializer{
 	
 	
 	private DangDangPricePage crawl(String url) {
-		crawler.getCrawler().addPage(url);
+		System.out.println(url);
+		
 		List<Object> list= crawler.getCrawler().crawl(DangDangPricePage.class);
 		
 		if(list.size()>0) {
 			DangDangPricePage p=(DangDangPricePage)list.get(0);
-			return p;
-			
+			if(p.getPrice()!=null && !"".equals(p.getPrice())) {
+				return p;
+			}else {
+				return null;
+			}
 		}
-		crawler.getCrawler().clearPage();
 		return null;
 	}
 
