@@ -12,7 +12,7 @@ import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
-import org.apache.activemq.ActiveMQConnection;
+
 import org.apache.activemq.ActiveMQConnectionFactory;
 
 import com.alibaba.fastjson.JSON;
@@ -64,7 +64,7 @@ public class TaskServer {
 				Field f=TaskServer.class.getField("connectionFactory");
 				FactoryType fac=f.getAnnotation(FactoryType.class);
 				if(fac.type().equals("activemq")) {
-					connectionFactory=new ActiveMQConnectionFactory(ActiveMQConnection.DEFAULT_USER, ActiveMQConnection.DEFAULT_PASSWORD, ActiveMQConnection.DEFAULT_BROKER_URL);
+					connectionFactory=new ActiveMQConnectionFactory("zhouchangjin", "zhouchangjin", "tcp://114.116.44.106:61616");
 				}
 			} catch (NoSuchFieldException e) {
 				// TODO Auto-generated catch block
@@ -86,7 +86,7 @@ public class TaskServer {
 			clientQueue=session.createQueue("crawl_task");
 			MessageConsumer consumer = session.createConsumer(serverQueue);
 			MessageProducer producer = session.createProducer(clientQueue);
-			producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT); // 发送消息
+			producer.setDeliveryMode(DeliveryMode.PERSISTENT); // 发送消息
 			while (true) {
 				TextMessage message = (TextMessage) consumer.receive();
 				if (message != null) {

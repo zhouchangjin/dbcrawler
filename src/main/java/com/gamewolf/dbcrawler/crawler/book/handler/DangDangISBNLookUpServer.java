@@ -6,13 +6,22 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.gamewolf.dbcrawler.base.DBCrawler;
 import com.gamewolf.dbcrawler.crawler.book.model.DDBookFSearch;
 import com.gamewolf.dbcrawler.initializer.ParameterizedInitializer;
 import com.gamewolf.util.book.ISBNCode;
 import com.harmonywisdom.crawler.annotation.PageCrawlerDBSetting;
+import com.harmonywisdom.crawler.httputil.HtmlFetcher;
+import com.harmonywisdom.crawler.proxy.Proxy;
+import com.harmonywisdom.crawler.proxy.ProxyPool;
+import com.harmonywisdom.crawler.proxy.ProxyTester;
+import com.harmonywisdom.crawler.proxy.ResultParser;
 
 public class DangDangISBNLookUpServer extends ParameterizedInitializer {
 	
@@ -34,12 +43,54 @@ public class DangDangISBNLookUpServer extends ParameterizedInitializer {
 	}
 
 	private void run() {
-		// TODO Auto-generated method stub
-		int startPage=getPage();
 		
+		String url="http://webapi.http.zhimacangku.com/getip?num=1&type=2&pro=&city=0&yys=0&port=1&pack=19087&ts=0&ys=0&cs=0&lb=1&sb=0&pb=4&mr=1&regions=";
+		ResultParser parser=new ResultParser() {
+			@Override
+			public List<Proxy> parse(String text) {
+				List<Proxy> list=new ArrayList<Proxy>();
+				JSONObject obj=JSON.parseObject(text);
+				if(obj.getBoolean("success")) {
+					JSONArray array=obj.getJSONArray("data");
+					for(int i=0;i<array.size();i++) {
+						JSONObject proxyObj=array.getJSONObject(i);
+						String ip=proxyObj.getString("ip");
+						int port=proxyObj.getIntValue("port");
+						Proxy p=new Proxy();
+						p.setHost(ip);
+						p.setPort(port);
+						list.add(p);
+					}
+				}
+				return list;
+			}
+		};
+		
+		ProxyTester test=new ProxyTester() {
+			
+			@Override
+			public boolean test(Proxy proxy) {
+				// TODO Auto-generated method stub
+				String url="http://search.dangdang.com/?key=9787565823435";
+				String res=HtmlFetcher.FetchFromUrlWithProxy(url, proxy.getHost(), proxy.getPort());
+				if(res==null ||"".equals(res)) {
+					System.out.println("=======连接已经失效=========");
+					return false;
+				}else if(res.contains("page_hurry")){
+					System.out.println("========反爬虫==============");
+					return false;
+				}else {
+					return true;
+				}
+			}
+		};
+		
+		ProxyPool pool=new ProxyPool(url, parser);
+		
+		int startPage=getPage();
+		boolean useProxy=false;
 		//String isbnFile="c:/isbn_dangdang_rest.txt";  //输入为isbn列表，每行一个isbn
 		//String outFile="c:/isbn_dangdang.txt";
-		
 		String isbnFile=this.params.getStringValue("task_file");
 		String outFile=this.params.getStringValue("output_file");
 		System.out.println(isbnFile);
@@ -56,7 +107,13 @@ public class DangDangISBNLookUpServer extends ParameterizedInitializer {
 					
 					String ddUrl="http://search.dangdang.com/?key=" + isbn;//"https://search.jd.com/Search?keyword=" + isbn;
 					ddCrawler.getCrawler().addPage(ddUrl);
-					List<Object> list=ddCrawler.getCrawler().crawl(DDBookFSearch.class);
+					List<Object> list=null;
+					if(useProxy) {
+						list=ddCrawler.getCrawler().crawlWithProxy(DDBookFSearch.class, pool, test);//.crawl(DDBookFSearch.class);
+					}else {
+						list=ddCrawler.getCrawler().crawl(DDBookFSearch.class);
+					}
+					
 					DDBookFSearch search=(DDBookFSearch) list.get(0);
 					String bookName=search.getBookName();
 					String bookCover=search.getBookCover();
