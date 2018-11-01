@@ -51,7 +51,13 @@ public class DangDangISBNCrawler extends ParameterizedInitializer {
 	
 	
 	private void initProxy() {
-		String url="http://webapi.http.zhimacangku.com/getip?num=1&type=2&pro=&city=0&yys=0&port=1&pack=19087&ts=0&ys=0&cs=0&lb=1&sb=0&pb=4&mr=1&regions=";
+		String id=params.getStringValue("id");
+		if(id==null) {
+			id="19087";
+		}
+		String url="http://webapi.http.zhimacangku.com/getip?num=1&type=2&pro=&city=0&yys=0&port=1&pack="+id+"&ts=0&ys=0&cs=0&lb=1&sb=0&pb=4&mr=1&regions=";
+		
+		//String url="http://webapi.http.zhimacangku.com/getip?num=1&type=2&pro=&city=0&yys=0&port=1&pack=19087&ts=0&ys=0&cs=0&lb=1&sb=0&pb=4&mr=1&regions=";
 		
 		parser=new ResultParser() {
 			@Override
