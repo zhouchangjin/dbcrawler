@@ -102,7 +102,6 @@ public class TaskServer {
 			session.close();
 			connection.close();
 		} catch (JMSException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} // 启动连接
 
