@@ -63,7 +63,7 @@ public class DangdangPageCrawler extends ParameterizedInitializer{
 	private void run() {
 		Integer id=params.getIntegerValue("id");
 		if(id==null) {
-			id=19087;
+			id=33701;
 		}
 		String url="http://webapi.http.zhimacangku.com/getip?num=1&type=2&pro=&city=0&yys=0&port=1&pack="+id+"&ts=0&ys=0&cs=0&lb=1&sb=0&pb=4&mr=1&regions=";
 		ResultParser parser=new ResultParser() {
@@ -122,7 +122,7 @@ public class DangdangPageCrawler extends ParameterizedInitializer{
 		}
 		try {
 			BufferedWriter bw=new BufferedWriter(new FileWriter(file,true));
-			String brokerUrl="tcp://127.0.0.1:61616";
+			String brokerUrl="tcp://n18147r541.51mypc.cn:55732";
 			ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("zhouchangjin", "zhouchangjin", brokerUrl);
 			
 			connection = connectionFactory.createConnection();
