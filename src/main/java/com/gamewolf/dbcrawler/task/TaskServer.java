@@ -64,7 +64,7 @@ public class TaskServer {
 				Field f=TaskServer.class.getField("connectionFactory");
 				FactoryType fac=f.getAnnotation(FactoryType.class);
 				if(fac.type().equals("activemq")) {
-					connectionFactory=new ActiveMQConnectionFactory("admin", "admin", "tcp://n18147r541.51mypc.cn:55732");
+					connectionFactory=new ActiveMQConnectionFactory("admin", "admin", "tcp://www.51meiyu.cn:55732");
 				}
 			} catch (NoSuchFieldException e) {
 				// TODO Auto-generated catch block
