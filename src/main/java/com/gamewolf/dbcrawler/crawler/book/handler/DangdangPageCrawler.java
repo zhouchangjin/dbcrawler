@@ -57,7 +57,6 @@ public class DangdangPageCrawler extends ParameterizedInitializer{
 		DangdangPageCrawler main=new DangdangPageCrawler();
 		main.init(args);
 		main.run();
-
 	}
 
 	private void run() {
@@ -122,7 +121,7 @@ public class DangdangPageCrawler extends ParameterizedInitializer{
 		}
 		try {
 			BufferedWriter bw=new BufferedWriter(new FileWriter(file,true));
-			String brokerUrl="tcp://n18147r541.51mypc.cn:55732";
+			String brokerUrl="tcp://www.51meiyu.cn:55732";
 			ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("zhouchangjin", "zhouchangjin", brokerUrl);
 			
 			connection = connectionFactory.createConnection();
