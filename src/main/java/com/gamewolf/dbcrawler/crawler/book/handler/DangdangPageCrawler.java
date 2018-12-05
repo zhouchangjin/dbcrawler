@@ -139,6 +139,10 @@ public class DangdangPageCrawler extends ParameterizedInitializer{
 					DangDangPricePage data=crawl(processedUrl,useProxyFlag,pool,test);
 					crawler.getCrawler().clearPage();
 					if(data!=null) {
+						if(!useProxyFlag && (data.getProductJson()==null || data.getProductJson().equals(""))) {
+							System.out.println("comming hereeeeeeeeeeee");
+							break;
+						}
 						String line=data.getUrl()+","+data.getOriginalPrice()+","+data.getPrice()+",'"+data.getCategoryText()+"'"+",'"+data.getProductJson()+"'";
 						bw.append(line);
 						bw.newLine();
