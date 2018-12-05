@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.jms.Connection;
@@ -126,21 +127,48 @@ public class DangdangPageCrawler extends ParameterizedInitializer{
 			Session session = connection.createSession(true, Session.AUTO_ACKNOWLEDGE); // 消息目的地
 			Queue clientQueue=session.createQueue("crawl_task");
 			MessageConsumer consumer = session.createConsumer(clientQueue);
-			
+			String testUrl="http://product.m.dangdang.com/1146180050.html";
+			if(!useProxyFlag) {
+				//crawler.getCrawler().context.login(testUrl);
+			}
 			while (true) {
+				
+				try {
+					Thread.sleep(700);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
 				TextMessage message = (TextMessage) consumer.receive();
 				if (message != null) {
 					session.commit();
 					Task t=JSON.parseObject(message.getText(),Task.class);
-					
 					String page=t.getTaskPage();
-					String processedUrl=page.replace("product.dangdang.com", "product.m.dangdang.com");
+					Date now=new Date();
+					//long time=now.getTime()/1000;
+					String processedUrl=page.replace("product.dangdang.com", "product.m.dangdang.com");//+"?t="+time;
+					//在爬取前试探ip被封
+					if(!useProxyFlag) {
+						String res=crawler.getCrawler().context.fetchHTML(testUrl);
+						
+						if(res==null || res.equals("")) {
+							System.out.println("====未知原因=====");
+							break;
+						}else if(res!=null && res.contains("error404")){
+							System.out.println("========反爬虫1==============");
+							break;
+						}
+					}
+					
+					
+					
 					crawler.getCrawler().addPage(processedUrl);
 					DangDangPricePage data=crawl(processedUrl,useProxyFlag,pool,test);
 					crawler.getCrawler().clearPage();
 					if(data!=null) {
 						if(!useProxyFlag && (data.getProductJson()==null || data.getProductJson().equals(""))) {
-							System.out.println("comming hereeeeeeeeeeee");
+							System.out.println("未知原因");
 							break;
 						}
 						String line=data.getUrl()+","+data.getOriginalPrice()+","+data.getPrice()+",'"+data.getCategoryText()+"'"+",'"+data.getProductJson()+"'";
@@ -148,9 +176,15 @@ public class DangdangPageCrawler extends ParameterizedInitializer{
 						bw.newLine();
 						bw.flush();
 					}else {
-						//data==null
 						if(!useProxyFlag) {
-							break;
+							String res=crawler.getCrawler().context.fetchHTML(testUrl);//HtmlFetcher.FetchFromUrl(processedUrl);
+							if(res==null || res.equals("")) {
+								System.out.println("====未知原因=====");
+								break;
+							}else if(res!=null && res.contains("error404")){
+								System.out.println("========反爬虫2==============");
+								break;
+							}
 						}
 					}
 					
