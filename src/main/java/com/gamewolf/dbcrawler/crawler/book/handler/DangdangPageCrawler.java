@@ -39,9 +39,6 @@ public class DangdangPageCrawler extends ParameterizedInitializer{
 	@PageCrawlerDBSetting(value = "DETAIL_DD_PRICE")
 	public DBCrawler crawler;
 	
-	@MysqlTableBinding(javaClass=Task.class, table = "task")
-	public MySqlHandler handler;
-
 	Connection connection;
 
 
@@ -142,11 +139,15 @@ public class DangdangPageCrawler extends ParameterizedInitializer{
 					DangDangPricePage data=crawl(processedUrl,useProxyFlag,pool,test);
 					crawler.getCrawler().clearPage();
 					if(data!=null) {
-						handler.updateObject("is_done=1", "task_id='"+t.getTaskId()+"'");
 						String line=data.getUrl()+","+data.getOriginalPrice()+","+data.getPrice()+",'"+data.getCategoryText()+"'"+",'"+data.getProductJson()+"'";
 						bw.append(line);
 						bw.newLine();
 						bw.flush();
+					}else {
+						//data==null
+						if(!useProxyFlag) {
+							break;
+						}
 					}
 					
 				} else {
