@@ -29,6 +29,47 @@ public class JDPageObject extends GoodsPage{
 	String size;
 	
 	String summary;
+	
+	String skuid;
+	
+	String venderId;
+	
+	String cat;
+	
+	String catName;
+
+	public String getCatName() {
+		return catName;
+	}
+
+	public void setCatName(String catName) {
+		this.catName = catName;
+	}
+
+	public String getSkuid() {
+		return skuid;
+	}
+
+	public void setSkuid(String skuid) {
+		this.skuid = skuid;
+	}
+
+	public String getVenderId() {
+		return venderId;
+	}
+
+	public void setVenderId(String venderId) {
+		this.venderId = venderId;
+	}
+
+	public String getCat() {
+		return cat;
+	}
+
+	public void setCat(String cat) {
+		
+		this.cat = cat.trim().replace("[", "");
+	}
 
 	public Float getJdPrice() {
 		return jdPrice;
@@ -51,7 +92,7 @@ public class JDPageObject extends GoodsPage{
 	}
 
 	public void setBookName(String bookName) {
-		this.bookName = bookName;
+		this.bookName = bookName.trim();
 	}
 
 	public String getBookCover() {
