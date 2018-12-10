@@ -35,7 +35,7 @@ public class DBCrawler{
 	
 	public static DataSourceFactory factory = new DataSourceFactory();
 	
-	MySqlHandler handler;
+	MySqlHandler handler; 
 	PageCrawler crawler;
 	MappingConfig config;
 	MysqlDataSource datasource;
