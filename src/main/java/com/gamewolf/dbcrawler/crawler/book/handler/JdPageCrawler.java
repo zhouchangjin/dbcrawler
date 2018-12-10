@@ -55,7 +55,7 @@ public class JdPageCrawler extends ParameterizedInitializer{
 				
 				String urlForPrice="http://c0.3.cn/stock?skuId="+obj.getSkuid()+"&venderId="+obj.getVenderId()+"&cat="+obj.getCat()+"&area=1_72_2799_0";
 				System.out.println(urlForPrice);
-				String json=HtmlFetcher.FetchFromUrl(urlForPrice);
+				String json=HtmlFetcher.FetchFromUrlWithCharsetSpecified(urlForPrice,"gb2312");
 				String outputLine=line+","+json+","+JSON.toJSONString(obj);
 				bw.write(outputLine);
 				bw.newLine();
