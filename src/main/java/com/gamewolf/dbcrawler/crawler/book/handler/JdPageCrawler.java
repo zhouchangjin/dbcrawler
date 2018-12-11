@@ -38,8 +38,8 @@ public class JdPageCrawler extends ParameterizedInitializer{
 	}
 
 	private void run() {
-		String jdList="c:/jdList.txt";
-		String jdOutList="c:/jdOut.txt";
+		String jdList="c:/jdoutList.txt";
+		String jdOutList="c:/jdOut02.txt";
 		File input=new File(jdList);
 		File output=new File(jdOutList);
 		try {
