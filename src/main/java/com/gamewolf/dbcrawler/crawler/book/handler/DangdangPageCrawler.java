@@ -147,7 +147,7 @@ public class DangdangPageCrawler extends ParameterizedInitializer{
 					String page=t.getTaskPage();
 					Date now=new Date();
 					//long time=now.getTime()/1000;
-					String processedUrl=page.replace("product.dangdang.com", "product.m.dangdang.com");//+"?t="+time;
+					String processedUrl=page.replace("product.dangdang.com", "product.m.dangdang.com").trim();//+"?t="+time;
 					//在爬取前试探ip被封
 					if(!useProxyFlag) {
 						String res=crawler.getCrawler().context.fetchHTML(testUrl);
