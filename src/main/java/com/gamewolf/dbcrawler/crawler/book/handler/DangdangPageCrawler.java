@@ -20,8 +20,6 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.gamewolf.database.handler.MySqlHandler;
-import com.gamewolf.database.orm.annotation.MysqlTableBinding;
 import com.gamewolf.dbcrawler.base.DBCrawler;
 import com.gamewolf.dbcrawler.crawler.book.model.DangDangPricePage;
 import com.gamewolf.dbcrawler.initializer.ParameterizedInitializer;
