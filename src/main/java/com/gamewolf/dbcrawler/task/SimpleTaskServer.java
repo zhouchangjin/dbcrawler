@@ -16,7 +16,11 @@ import javax.jms.TextMessage;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 
-
+import com.alibaba.fastjson.JSON;
+import com.gamewolf.database.handler.MySqlHandler;
+import com.gamewolf.database.orm.annotation.MysqlTableBinding;
+import com.gamewolf.dbcrawler.model.base.Task;
+import com.gamewolf.dbcrawler.model.base.TaskMessage;
 import com.gamewolf.dbcrawler.util.AutoAwareUtil;
 
 public class SimpleTaskServer {
@@ -33,6 +37,9 @@ public class SimpleTaskServer {
 	Destination taskCreator;
 	
 	Destination task;
+	
+	@MysqlTableBinding(javaClass=Task.class, table = "task")
+	public MySqlHandler handler;
 	
 	@TaskType
 	public static TaskQueue taskQueue;
@@ -110,13 +117,34 @@ public class SimpleTaskServer {
 					String json="";
 					try {
 						json = msg.getText();
-						
-						System.out.println(json);
+						Task t=JSON.parseObject(json,Task.class);
+						taskQueue.addTask(t);
+						producer.send(message);
 					} catch (JMSException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} 
 					
+				}
+			});
+			
+			monitor_consumer.setMessageListener(new MessageListener() {
+				
+				@Override
+				public void onMessage(Message message) {
+					TextMessage msg=(TextMessage)message;
+					String json="";
+					try {
+						json=msg.getText();
+						TaskMessage t=JSON.parseObject(json,TaskMessage.class);
+						if(t.getEvent().equals("DONE")) {
+							String id=t.getTaskId();
+							handler.updateObject(" task_status = 'DONE' ", " id='"+id+"' ");
+						}
+					} catch (JMSException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			});
 			
