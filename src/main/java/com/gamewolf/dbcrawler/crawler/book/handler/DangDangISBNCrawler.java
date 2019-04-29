@@ -104,12 +104,7 @@ public class DangDangISBNCrawler extends ParameterizedInitializer {
 	}
 
 	private void run() {
-		
-		
 		initProxy();
-		
-
-		
 		int startPage=getPage();
 		String useProxy=this.params.getStringValue("use_proxy");
 		//String isbnFile="c:/isbn_dangdang_rest.txt";  //输入为isbn列表，每行一个isbn
