@@ -37,6 +37,36 @@ public class JDPageObject extends GoodsPage{
 	String cat;
 	
 	String catName;
+	
+	String bookSize;
+	
+	String paper;
+	
+	String pack;
+
+	public String getPack() {
+		return pack;
+	}
+
+	public void setPack(String pack) {
+		this.pack = pack;
+	}
+
+	public String getPaper() {
+		return paper;
+	}
+
+	public void setPaper(String paper) {
+		this.paper = paper;
+	}
+
+	public String getBookSize() {
+		return bookSize;
+	}
+
+	public void setBookSize(String bookSize) {
+		this.bookSize = bookSize;
+	}
 
 	public String getCatName() {
 		return catName;
