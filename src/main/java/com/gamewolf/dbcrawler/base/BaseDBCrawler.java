@@ -10,6 +10,7 @@ import org.w3c.dom.NodeList;
 import com.gamewolf.database.dbconnector.ConnectionProperties;
 import com.gamewolf.database.dbsource.DataSourceFactory;
 import com.gamewolf.database.dbsource.ITableDatasource;
+import com.gamewolf.database.handler.DataSourceHanlderFactory;
 import com.gamewolf.database.handler.IDatasourceHandler;
 import com.gamewolf.database.handler.MappingConfig;
 import com.gamewolf.util.datafile.XMLNode;
@@ -21,7 +22,7 @@ public class BaseDBCrawler implements IDatabaseCrawler{
 	
 	public static DataSourceFactory factory = new DataSourceFactory();
 	
-	IDatasourceHandler<ITableDatasource> datasourceHandler;
+	IDatasourceHandler<?> datasourceHandler;
 	
 	PageCrawler crawler;
 	
@@ -42,6 +43,15 @@ public class BaseDBCrawler implements IDatabaseCrawler{
 	String colField;
 	
 	String listPath;
+	
+	public BaseDBCrawler() {
+		this.crawler=new PageCrawler();
+	}
+	
+	public static BaseDBCrawler startBuild() {
+		BaseDBCrawler dbCrawler=new BaseDBCrawler();
+		return dbCrawler;
+	}
 
 
 	@Override
@@ -108,7 +118,9 @@ public class BaseDBCrawler implements IDatabaseCrawler{
 	public IDatabaseCrawler fromJDBCPropertieFile(String path, String file, boolean isRes) {
 		ConnectionProperties connectionProperties=ConnectionProperties.loadPropertiesFromPropetiesFile(path, file, isRes);
 		ITableDatasource datasource=(ITableDatasource) factory.getDataSourceByConnectionProperties(connectionProperties);
-		datasourceHandler.setDatasource(datasource);
+		DataSourceHanlderFactory dataSourceHanlderFactory=new DataSourceHanlderFactory();
+		this.datasourceHandler=dataSourceHanlderFactory.createDatasourceHandler(datasource);
+		datasourceHandler.setTableDatasource(datasource);
 		return this;
 	}
 
@@ -121,6 +133,16 @@ public class BaseDBCrawler implements IDatabaseCrawler{
 	@Override
 	public IDatabaseCrawler setIdName(String name) {
 		this.idCol=name;
+		return this;
+	}
+	
+	public PageCrawler getCrawler() {
+		return this.crawler;
+	}
+
+	@Override
+	public IDatabaseCrawler setId(String id) {
+		this.value=id;
 		return this;
 	}
 

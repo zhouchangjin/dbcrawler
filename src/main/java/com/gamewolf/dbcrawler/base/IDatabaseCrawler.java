@@ -13,5 +13,7 @@ public interface IDatabaseCrawler {
 	IDatabaseCrawler fromJDBCPropertieFile(String path,String file,boolean isRes); 
 	
 	IDatabaseCrawler setIdName(String name);
+	
+	IDatabaseCrawler setId(String id);
 
 }
