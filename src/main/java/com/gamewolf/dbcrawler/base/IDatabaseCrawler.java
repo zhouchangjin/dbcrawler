@@ -1,5 +1,8 @@
 package com.gamewolf.dbcrawler.base;
 
+import java.util.List;
+
+
 public interface IDatabaseCrawler {
 	
 	IDatabaseCrawler build();
@@ -15,5 +18,8 @@ public interface IDatabaseCrawler {
 	IDatabaseCrawler setIdName(String name);
 	
 	IDatabaseCrawler setId(String id);
-
+	
+	void addPage(String url);
+	
+	List<Object> crawl();
 }

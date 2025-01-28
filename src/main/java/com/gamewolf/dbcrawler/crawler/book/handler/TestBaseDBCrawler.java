@@ -2,7 +2,6 @@ package com.gamewolf.dbcrawler.crawler.book.handler;
 
 import java.util.List;
 
-import com.alibaba.fastjson.JSONObject;
 import com.gamewolf.dbcrawler.base.BaseDBCrawler;
 import com.gamewolf.dbcrawler.base.IDatabaseCrawler;
 import com.gamewolf.dbcrawler.initializer.ParameterizedInitializer2;
@@ -33,10 +32,12 @@ public class TestBaseDBCrawler extends ParameterizedInitializer2{
 		
 		String url="https://www.mobygames.com/game/1262/riven-the-sequel-to-myst/";
 		BaseDBCrawler base=(BaseDBCrawler)crawler;
-		base.getCrawler().addPage(url);
-		List<Object> result=base.getCrawler().crawl(JSONObject.class);
-		JSONObject o=(JSONObject)result.get(0);
-		System.out.print(o);
+		base.addPage(url);
+		List<Object> list=base.crawl();
+		for(Object o:list) {
+			System.out.println(o);
+		}
+
 	}
 
 }

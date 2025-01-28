@@ -1,0 +1,12 @@
+<xml>
+<Prop name="game_name" type="value" class="String">
+<Expression>
+//h1
+</Expression>
+</Prop>
+<Prop name="game_score" type="value" class="Double">
+<Expression>
+//div[@class='mobyscore']
+</Expression>
+</Prop>
+</xml>
