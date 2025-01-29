@@ -21,7 +21,7 @@ import com.harmonywisdom.crawler.annotation.PageCrawlerDBSetting;
  */
 public class AmazonISBNCrawler extends ParameterizedInitializer{
 	
-	@PageCrawlerDBSetting(value = "ISBN_AMAZON",propertieFile = "sqlite.properties")
+	@PageCrawlerDBSetting(value = "ISBN_AMAZON")
 	public DBCrawler crawler;
 
 	public DBCrawler getCrawler() {

@@ -5,12 +5,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import com.gamewolf.database.dbsource.DataSourceFactory;
+import com.gamewolf.database.handler.init.SqliteInitializer;
 import com.gamewolf.dbcrawler.base.BaseDBCrawler;
 import com.gamewolf.dbcrawler.base.IDatabaseCrawler;
 import com.gamewolf.util.lang.IntegerParser;
 import com.harmonywisdom.crawler.annotation.PageCrawlerDBSetting;
 
-public class ParameterizedInitializer2 implements IParameterInitializer {
+public class ParameterizedInitializer2 extends SqliteInitializer implements IParameterInitializer {
 	
 	public static DataSourceFactory factory = new DataSourceFactory();
 	public IParameterSet params;
@@ -32,7 +33,7 @@ public class ParameterizedInitializer2 implements IParameterInitializer {
 
 			}
 		}
-		
+		initSqliteHandler();
 		dbCrawlerAware();
 
 	}

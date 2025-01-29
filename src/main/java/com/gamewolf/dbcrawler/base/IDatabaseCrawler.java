@@ -21,5 +21,7 @@ public interface IDatabaseCrawler {
 	
 	void addPage(String url);
 	
+	void clearPage();
+	
 	List<Object> crawl();
 }

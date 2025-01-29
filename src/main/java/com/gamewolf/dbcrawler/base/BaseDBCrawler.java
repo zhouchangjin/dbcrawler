@@ -169,6 +169,12 @@ public class BaseDBCrawler implements IDatabaseCrawler{
 	}
 
 	@Override
+	public void clearPage() {
+		urlList.clear();
+		
+	}
+	
+	@Override
 	public void addPage(String url) {
 		urlList.add(url);
 	}
@@ -192,7 +198,7 @@ public class BaseDBCrawler implements IDatabaseCrawler{
 	private List<Node> crawlPageObjects(String page) {
 		HtmlCleaner cleaner = new HtmlCleaner();
 		try {
-			String listCont=HtmlFetcher.FetchFromUrl(page);
+			String listCont=PageCrawler.context.fetchHTML(page);
 			TagNode tagnode = cleaner.clean(new ByteArrayInputStream(listCont.getBytes()));
 			this.doc = new DomSerializer(new CleanerProperties()).createDOM(tagnode);
 			NodeList nodeList = XPathAPI.selectNodeList(doc, this.listPath);
