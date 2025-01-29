@@ -9,7 +9,7 @@ import com.harmonywisdom.crawler.annotation.PageCrawlerDBSetting;
 
 public class TestBaseDBCrawler extends ParameterizedInitializer2{
 	
-	@PageCrawlerDBSetting(value = "test",propertieFile="sqlite.properties")
+	@PageCrawlerDBSetting(value = "mobygames_nes_list",propertieFile="sqlite.properties")
 	public IDatabaseCrawler crawler;
 
 	public IDatabaseCrawler getCrawler() {
@@ -30,7 +30,8 @@ public class TestBaseDBCrawler extends ParameterizedInitializer2{
 
 	private void run() {
 		
-		String url="https://www.mobygames.com/game/1262/riven-the-sequel-to-myst/";
+		//String url="https://www.mobygames.com/game/1262/riven-the-sequel-to-myst/";
+		String url="https://www.mobygames.com/platform/nes/";
 		BaseDBCrawler base=(BaseDBCrawler)crawler;
 		base.addPage(url);
 		List<Object> list=base.crawl();

@@ -1,0 +1,38 @@
+<xml>
+	<List>
+		<xpath>//table/tbody/tr</xpath>
+		<Object>
+			<Prop name="gameName" type="value" class="String">
+				<Expression>
+					td[@class='text-nowrap']
+				</Expression>
+			</Prop>
+			<Prop name="released" type="value" class="String">
+				<Expression>
+					td[2]
+				</Expression>
+			</Prop>
+			<Prop name="genres" type="value" class="String">
+				<Expression>
+					td[3]/a
+				</Expression>
+			</Prop>
+			<Prop name="mobyscore" type="value" class="String">
+				<Expression>
+					td[4]/div
+				</Expression>
+			</Prop>
+			<Prop name="coverUrl" type="attr" class="String">
+				<Expression>
+					td[1]/img/@src
+				</Expression>
+			</Prop>
+			
+			<Prop name="pageUrl" type="attr" class="String">
+				<Expression>
+					td[1]/a/@href
+				</Expression>
+			</Prop>
+		</Object>
+	</List>
+</xml>

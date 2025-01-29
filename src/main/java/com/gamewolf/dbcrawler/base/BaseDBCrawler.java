@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.apache.xpath.XPathAPI;
@@ -95,13 +96,16 @@ public class BaseDBCrawler implements IDatabaseCrawler{
 			if(node.getNode("List")!=null) {
 				XMLNode list=node.getNode("List");
 				String xpath=list.getNode("xpath").getValue();
-				String className=list.getNode("Object").getAttribute("className").toString();
+				
 				XMLNode objNode=list.getNode("Object");
+				if(objNode.getAttribute("className")!=null) {
+					String className=objNode.getAttribute("className").toString();
+					this.clz=Class.forName(className);
+				}
 				binding=ObjectPageBingding.buildFromXMLString(objNode.toXML());
 				crawler.setBinding(binding);
 				this.listPath=xpath;
 				this.isList=true;
-				this.clz=Class.forName(className);
 			}else {
 				if(node.getAttribute("className")!=null) {
 					String className=node.getAttribute("className").toString();
@@ -172,12 +176,12 @@ public class BaseDBCrawler implements IDatabaseCrawler{
 	@Override
 	public List<Object> crawl() {
 		if(isList) {
-			List<String> allConts=new ArrayList<String>();
+			List<Node> allConts=new ArrayList<Node>();
 			for(String page:urlList) {
-				List<String> contList=crawlPageObjects(page);
+				List<Node> contList=crawlPageObjects(page);
 				allConts.addAll(contList);
 			}
-			return crawler.crawlByHtmlCont(getMappingClass(),
+			return crawler.crawlByNodes(getMappingClass(),
 					allConts);
 
 		}else {
@@ -185,23 +189,22 @@ public class BaseDBCrawler implements IDatabaseCrawler{
 		}
 	}
 
-	private List<String> crawlPageObjects(String page) {
+	private List<Node> crawlPageObjects(String page) {
 		HtmlCleaner cleaner = new HtmlCleaner();
 		try {
 			String listCont=HtmlFetcher.FetchFromUrl(page);
 			TagNode tagnode = cleaner.clean(new ByteArrayInputStream(listCont.getBytes()));
 			this.doc = new DomSerializer(new CleanerProperties()).createDOM(tagnode);
 			NodeList nodeList = XPathAPI.selectNodeList(doc, this.listPath);
-			List<String> htmlContList=new ArrayList<String>();
+			List<Node> htmlContList=new ArrayList<Node>();
 			for(int i=0;i<nodeList.getLength();i++) {
 				Node node=nodeList.item(i);
-				String cont=W3CNodeUtil.getInnerHTML(node);
-				htmlContList.add(cont);
+				htmlContList.add(node);
 			}
 			return htmlContList;
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ArrayList<String>();
+			return new ArrayList<Node>();
 		} 
 		
 	}
