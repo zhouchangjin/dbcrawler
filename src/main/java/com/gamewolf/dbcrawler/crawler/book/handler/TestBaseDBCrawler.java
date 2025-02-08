@@ -16,7 +16,7 @@ import com.harmonywisdom.crawler.page.PageCrawler;
 
 public class TestBaseDBCrawler extends ParameterizedInitializer2{
 	
-	@PageCrawlerDBSetting(value = "mobygames_nes_list",propertieFile="sqlite.properties")
+	@PageCrawlerDBSetting(value = "mobygames_list_",propertieFile="sqlite.properties")
 	public IDatabaseCrawler crawler;
 	
 	@SqliteTableBinding(javaClass = JSONObject.class, table = "videogame")
@@ -44,7 +44,7 @@ public class TestBaseDBCrawler extends ParameterizedInitializer2{
 		BaseDBCrawler base=(BaseDBCrawler)crawler;
 		
 		PageCrawler.context.addCommonHeadder("cookie", loginInfo);
-		String platForm="playstation";
+		String platForm="pc98----";
 		String nes="https://www.mobygames.com/platform/"+platForm+"/page:";
 	
 		//String snesUrl="https://www.mobygames.com/platform/snes/page:";
@@ -66,7 +66,7 @@ public class TestBaseDBCrawler extends ParameterizedInitializer2{
 		//String dos="https://www.mobygames.com/platform/dos/page:";
 		Set<String> gameLink=new HashSet<String>();
 		boolean errorFlag=false;
-		for(int i=17;i<21;i++) {
+		for(int i=0;i<21;i++) {
 			String pageUrl=nes+i+"/";
 			base.addPage(pageUrl);
 			List<Object> list=base.crawl();
