@@ -32,7 +32,7 @@ public class TestImgDownload extends ParameterizedInitializer2{
 
 	private void run() {
 		// TODO Auto-generated method stub
-		String parentFolder="d:/game/image/2";
+		String parentFolder="d:/game/image/3";
 		screenshotTable.retrieveRows(new IRowRetrieveCallback() {
 			
 			@Override
@@ -54,6 +54,12 @@ public class TestImgDownload extends ParameterizedInitializer2{
 				if(name.contains("/")) {
 					name=name.replace("/", "_");
 				}
+				if(name.contains("?")) {
+					name=name.replace("?", "&");
+				}
+				if(name.contains("*")) {
+					name=name.replace("*", "星");
+				}
 				String url=object.getString("screenshot");
 				String fileName=gameId+"_"+name.trim()+"_"+id;
 				File checkFile=new File(parentFolder+"/"+fileName+".webp");
@@ -69,7 +75,7 @@ public class TestImgDownload extends ParameterizedInitializer2{
 				// TODO Auto-generated method stub
 				return null;
 			}
-		}, 10001, 10000);;
+		},20000, 10000);;
 	}
 
 }
